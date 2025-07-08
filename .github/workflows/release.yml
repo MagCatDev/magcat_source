@@ -5,9 +5,11 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  push:
-    branches:
-      - main
+   schedule:
+     - cron: '0 */4 * * *'
+#  push:
+#    branches:
+#      - main
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,13 +17,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check for new commits
+        run: |
+          git fetch origin main
+          if [ "$(git rev-list --count HEAD..origin/main)" -eq 0 ]; then
+            echo "No new commits found. Exiting."
+            exit 0
+          fi
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "MagCat Action"
+          git config --global user.email "action@magcat.app"
+
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
-          version: 10
-          run_install: false
+          version: 10.10.0
 
-      - id: Git commit hash
+      - name: Git commit hash
         uses: prompt/actions-commit-hash@v3
 
       - name: Install Node.js
@@ -35,6 +49,7 @@ jobs:
       - name: Build the source
         run: |
           pnpm run build
+          echo "TAG_NAME=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

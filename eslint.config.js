@@ -15,6 +15,7 @@ export default tseslint.config(
         rules: {
             "@typescript-eslint/no-explicit-any": "off",
             "arrow-parens": ["error", "always"],
+            indent: ["error", 2],
             quotes: ["error", "double"],
             semi: ["error", "always"],
             "prefer-const": [

@@ -1,10 +1,10 @@
 declare global {
-    type Filter = import("./zodSchemas").Filter;
-    type Metadata = import("./zodSchemas").Metadata;
-    type SearchOptions = import("./zodSchemas").SearchOptions;
-    type Item = import("./zodSchemas").Item;
-    type SearchResult = import("./zodSchemas").SearchResult;
-    type BridgeRequest = import("./zodSchemas").BridgeRequest;
+    type Filter = import("./types/schema").Filter;
+    type Metadata = import("./types/schema").Metadata;
+    type SearchOptions = import("./types/schema").SearchOptions;
+    type Item = import("./types/schema").Item;
+    type SearchResult = import("./types/schema").SearchResult;
+    type BridgeRequest = import("./types/schema").BridgeRequest;
 
     interface EngineApp {
         filters?: Filter[]
