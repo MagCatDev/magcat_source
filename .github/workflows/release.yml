@@ -11,19 +11,33 @@ on:
 #    branches:
 #      - main
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
+    outputs:
+      has_new_commits: ${{ steps.check_commits.outputs.has_new_commits }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Check for new commits
+        id: check_commits
         run: |
           git fetch origin main
           if [ "$(git rev-list --count HEAD..origin/main)" -eq 0 ]; then
-            echo "No new commits found. Exiting."
-            exit 0
+            echo "No new commits found."
+            echo "has_new_commits=false" >> $GITHUB_OUTPUT
+          else
+            echo "New commits found."
+            echo "has_new_commits=true" >> $GITHUB_OUTPUT
           fi
+
+  build:
+    needs: check
+    if: needs.check.outputs.has_new_commits == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Set up Git
         run: |
