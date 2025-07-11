@@ -61,6 +61,8 @@ async function gitPrepare() {
   const tagName = `${new Date().toISOString().slice(2, 10).replace(/-/g, "")}${shortRef}`;
   await exec("git", ["tag", tagName]);
   await exec("git", ["push", "origin", tagName]);
+  await exec("git", ["tag", "-f", "latest"]);
+  await exec("git", ["push", "origin", "-f", "latest"]);
   return tagName;
 }
 
@@ -85,7 +87,7 @@ async function build() {
         input: `${dir}/index.ts`,
       });
       await bundle.write({
-        format: "esm",
+        format: m.type == "engine" ? "esm" : "iife",
         minify: true,
         polyfillRequire: true,
         file: `dist/${id}.js`,
